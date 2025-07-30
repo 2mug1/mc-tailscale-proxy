@@ -13,7 +13,6 @@ sudo setcap 'cap_net_bind_service=+ep' /usr/local/sbin/haproxy
 printf "Enter Tailscale IPv4 for Minecraft Server: "
 read ts_ip
 
-# haproxy.cfg テンプレートの内容（直接ここに書き込み or 既存ファイルにテンプレ用意）
 cat <<EOF | sed "s/tailscale_ip/$ts_ip/" | sudo tee /usr/local/etc/haproxy/haproxy.cfg > /dev/null
 listen minecraft
     bind :25565
@@ -30,7 +29,6 @@ EOF
 
 echo "✅ haproxy.cfg updated with Tailscale IP: $ts_ip"
 
-# nginx.conf テンプレートの内容（直接ここに書き込み or 既存ファイルにテンプレ用意）
 cat <<EOF | sed "s/tailscale_ip/$ts_ip/" | sudo tee /etc/nginx/nginx.conf > /dev/null
 worker_processes 2;
 
@@ -61,7 +59,6 @@ EOF
 
 echo "✅ /usr/local/etc/haproxy/haproxy.cfg and /etc/nginx/nginx.conf updated with Tailscale IP: $ts_ip"
 
-# nginx systemdサービスユニットが無ければ作成する
 if ! systemctl list-unit-files | grep -q "^nginx.service"; then
   echo "nginx.service not found. Creating service unit..."
 

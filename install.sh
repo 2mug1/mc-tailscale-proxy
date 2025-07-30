@@ -6,14 +6,36 @@ sudo tailscale up
 
 sudo apt-get update
 
-sudo apt-get install -y wget curl iputils-ping net-tools libcap2-bin haproxy nginx 
+sudo apt-get install -y wget curl iputils-ping net-tools libcap2-bin haproxy
 
-sudo setcap 'cap_net_bind_service=+ep' /usr/local/sbin/haproxy
+# 公式鍵のインポート
+curl -fsSL https://nginx.org/keys/nginx_signing.key | sudo gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg
+
+# Ubuntuのコードネームを確認（例: focal, jammy）
+CODENAME=$(lsb_release -cs)
+
+# nginx.org公式リポジトリを追加
+echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu $CODENAME nginx" | sudo tee /etc/apt/sources.list.d/nginx.list
+
+# 優先度設定（aptが公式nginxを優先するように）
+sudo tee /etc/apt/preferences.d/99nginx <<EOF
+Package: *
+Pin: origin nginx.org
+Pin-Priority: 900
+EOF
+
+# パッケージリスト更新
+sudo apt-get update
+
+# nginxインストール
+sudo apt-get install -y nginx
+
+sudo setcap 'cap_net_bind_service=+ep' /usr/sbin/haproxy
 
 printf "Enter Tailscale IPv4 for Minecraft Server: "
 read ts_ip
 
-cat <<EOF | sed "s/tailscale_ip/$ts_ip/" | sudo tee /usr/local/etc/haproxy/haproxy.cfg > /dev/null
+cat <<EOF | sed "s/tailscale_ip/$ts_ip/" | sudo tee /etc/haproxy/haproxy.cfg > /dev/null
 listen minecraft
     bind :25565
     mode tcp
@@ -91,6 +113,6 @@ if systemctl list-unit-files | grep -q haproxy.service; then
     sudo systemctl enable haproxy
     echo "✅ HAProxy service restarted"
 else
-    sudo /usr/local/sbin/haproxy -f /usr/local/etc/haproxy/haproxy.cfg -D
+    sudo /usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg -D
     echo "✅ HAProxy started manually"
 fi

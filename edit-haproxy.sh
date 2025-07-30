@@ -1,1 +1,1 @@
-sudo nano /usr/local/etc/haproxy/haproxy.cfg
+sudo nano /etc/haproxy/haproxy.cfg

@@ -51,9 +51,3 @@ graph LR
     style E fill:#cceb34,stroke:#333,stroke-width:2px    %% Minecraft Server
     style D fill:#6699ff,stroke:#333,stroke-width:2px    %% Tailscale Network
 ```
-
-## Usage
-
-- `tcp/haproxy.cfg` `udp/nginx.conf`
-  - `tailscale_ip` 対象サーバーの Tailscale IPv4 アドレスを入力
-  - 任意のポートを入力

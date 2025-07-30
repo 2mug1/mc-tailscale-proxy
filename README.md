@@ -54,8 +54,6 @@ graph LR
 
 ## Usage
 
-- `compose.yml`
-  - `TS_AUTHKEY` 認証キーを入力
 - `tcp/haproxy.cfg` `udp/nginx.conf`
   - `tailscale_ip` 対象サーバーの Tailscale IPv4 アドレスを入力
   - 任意のポートを入力
